@@ -1,0 +1,78 @@
+Create 5 users
+- User.create(first_name:"first_name", last_name:"last_name", email_address:"email_adress")
+
+Create 5 blogs
+- Blog.create(name:"name", description:"description")
+
+Have the first 3 blogs be owned by the first user
+- Owner.create(user:User.first, blog:Blog.first)
+- Owner.create(user:User.first, blog:Blog.second)
+- Owner.create(user:User.first, blog:Blog.thrid)
+
+Have the 4th blog you create be owned by the second user
+- Owner.create(user:User.second, blog:Blog.fourth)
+
+Have the 5th blog you create be owned by the last user
+- Owner.create(user:User.last, blog:Blog.find(5))
+
+Have the third user own all of the blogs that were created.
+- u = User.third
+- Owner.create(user:u, blog:Blog.find(1))
+- Owner.create(user:u, blog:Blog.find(2))
+- Owner.create(user:u, blog:Blog.find(3))
+- Owner.create(user:u, blog:Blog.find(4))
+- Owner.create(user:u, blog:Blog.find(5))
+
+Have the first user create 3 posts for the blog with an id of 2. Remember that you shouldn't do Post.create(user: User.first, blog_id: 2) but more like Post.create(user: User.first, blog: Blog.find(2)). Again, you should never reference the foreign key in Rails.
+- Post.create(title:"First Title Post", content:"First Post Content", user:User.first, blog:Blog.find(2))
+
+Have the second user create 5 posts for the last Blog.
+- Post.create(title:"Fourth Title Post", content:"Fourth Post Content", user:User.second, blog:Blog.last)
+- Post.create(title:"Fifth Title Post", content:"Fifth Post Content", user:User.second, blog:Blog.last)
+- Post.create(title:"Sixth Title Post", content:"Sixth Post Content", user:User.second, blog:Blog.last)
+- Post.create(title:"Seventh Title Post", content:"Seventh Post Content", user:User.second, blog:Blog.last)
+- Post.create(title:"Eighth Title Post", content:"Eighth Post Content", user:User.second, blog:Blog.last)
+
+Have the 3rd user create several posts for different blogs.
+- Post.create(title:"Eighth Title Post", content:"Eighth Post Content", user:User.third, blog:Blog.third)
+- Post.create(title:"Ninth Title Post", content:"Ninth Post Content", user:User.third, blog:Blog.first)
+- Post.create(title:"Eighth Title Post", content:"Eighth Post Content", user:User.third, blog:Blog.fourth)
+
+Have the 3rd user create 2 messages for the first post created and 3 messages for the second post created
+- Message.create(author:"First Author Message", message:"First Message", user:User.third, post:Post.first)
+- Message.create(author:"First Author Message", message:"First Message", user:User.third, post:Post.second)
+
+
+Have the 4th user create 3 messages for the last post you created.
+- Message.create(post:Post.last, user:User.find(4), author:"4th User", message:"4th user create 3 messages #1")
+- Message.create(post:Post.last, user:User.find(4), author:"4th User", message:"4th user create 3 messages #2")
+- Message.create(post:Post.last, user:User.find(4), author:"4th User", message:"4th user create 3 messages #3")
+
+Change the owner of the 2nd post to the last user.
+- Post.second.update(user:User.second)
+
+Change the 2nd post's content to be something else.
+- Post.second.update(content:"Content Change")
+
+Retrieve all blogs owned by the 3rd user (make this work by simply doing: User.find(3).blogs).
+- User.find(3).blogs
+
+Retrieve all posts that were created by the 3rd user
+- User.third.posts
+
+Retrieve all messages left by the 3rd user
+- User.third.messages
+
+Retrieve all posts associated with the blog id 5 as well as who left these posts.
+- Blog.find(5).posts.joins(:user).select("first_name", "last_name")
+
+Retrieve all messages associated with the blog id 5 along with all the user information of those who left the messages
+- Blog.fifth.posts.joins(:messages).select("message") //winner winner
+- Blog.fifth.posts.joins(:messages).joins(:user).select("*") //shows everything and who wrote the message
+- Blog.fifth.posts.joins(:messages).joins(:user).select("first_name") //from the creater of the blog that has left messages from the post
+
+Grab all user information of those that own the first blog (make this work by allowing Blog.first.owners to work).
+- Blog.first.owners
+
+Change it so that the first blog is no longer owned by the first user.
+- Blog.first.owners.where(user: User.first.destroy)
